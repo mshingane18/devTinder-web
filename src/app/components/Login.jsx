@@ -2,8 +2,9 @@ import { useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+
+import { Link, useNavigate } from "react-router";
 import { BASE_URL } from "../utils/constants";
-import { useNavigate } from "react-router";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -79,6 +80,12 @@ const Login = () => {
               LogIn
             </button>
           </div>
+          <p className="text-center">
+            Not an account,{" "}
+            <Link className="link link-primary" to="/signup">
+              click here to sign up
+            </Link>
+          </p>
         </div>
       </div>
     </div>

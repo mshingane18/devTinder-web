@@ -2,10 +2,10 @@ import { Outlet, useNavigate } from "react-router";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import axios from "axios";
-import { BASE_URL } from "../utils/constants";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import { BASE_URL } from "../utils/constants";
 
 const Body = () => {
   const dispatch = useDispatch();
@@ -34,9 +34,15 @@ const Body = () => {
 
   return (
     <>
-      <Navbar />
-      <Outlet />
-      <Footer />
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+
+        <main className="flex-1 pb-4">
+          <Outlet />
+        </main>
+
+        <Footer />
+      </div>
     </>
   );
 };

@@ -24,7 +24,7 @@ const Navbar = () => {
     <div className="navbar bg-neutral text-neutral-content shadow-sm">
       <div className="flex-1">
         <Link
-          to="/"
+          to="/feed"
           className="flex items-center gap-2 text-xl font-bold cursor-pointer"
         >
           <img
