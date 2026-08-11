@@ -5,10 +5,11 @@ import { addUser } from "../utils/userSlice";
 
 import { Link, useNavigate } from "react-router";
 import { BASE_URL } from "../utils/constants";
+import Notification from "./Notification";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    emailId: "maheshs@gmail.com",
+    emailId: "elon@gmail.com",
     password: "mShingane@123",
   });
   const [error, setError] = useState("");
@@ -34,10 +35,17 @@ const Login = () => {
         },
         { withCredentials: true },
       );
-      dispatch(addUser(res.data.user));
-      navigate("/feed");
+      dispatch(addUser(res.data?.data));
+      navigate("/feed", {
+        state: {
+          success: res.data?.message,
+        },
+      });
     } catch (err) {
       setError(err.response?.data?.message);
+      setTimeout(() => {
+        setError("");
+      }, 3000);
     }
   };
 
@@ -52,7 +60,7 @@ const Login = () => {
                 Email Id
               </label>
               <input
-                type="text"
+                type="email"
                 id="email"
                 name="emailId"
                 className="input input-primary"
@@ -64,7 +72,7 @@ const Login = () => {
                 Password
               </label>
               <input
-                type="text"
+                type="password"
                 id="password"
                 name="password"
                 className="input input-primary"
@@ -72,7 +80,6 @@ const Login = () => {
                 placeholder="Password"
                 onChange={handleOnchange}
               />
-              {error && <p className="text-red-600">Error: {error}</p>}
             </fieldset>
           </div>
           <div className="card-actions justify-center">
@@ -88,6 +95,7 @@ const Login = () => {
           </p>
         </div>
       </div>
+      {error && <Notification type="error" message={error} />}
     </div>
   );
 };

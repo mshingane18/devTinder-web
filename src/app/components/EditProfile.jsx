@@ -14,8 +14,8 @@ const EditProfile = ({ user }) => {
   const [formData, setFormData] = useState({
     firstName,
     lastName,
-    age,
-    gender,
+    age: age || "",
+    gender: gender || "",
     about,
     photoUrl,
     skills: skills.join(", "),
@@ -110,7 +110,9 @@ const EditProfile = ({ user }) => {
                   value={formData.gender}
                   onChange={handleOnchange}
                 >
-                  <option disabled={true}>Select gender</option>
+                  <option value="" disabled={true}>
+                    Select gender
+                  </option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                   <option value="other">Other</option>
@@ -160,7 +162,7 @@ const EditProfile = ({ user }) => {
           </div>
         </div>
       </div>
-      <UserCard user={formData} />
+      <UserCard fromFeed={true} user={formData} />
       {success && <Notification type="success" message={success} />}
 
       {error && <Notification type="error" message={error} />}

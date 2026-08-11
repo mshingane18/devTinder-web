@@ -19,22 +19,29 @@ const Body = () => {
       });
       dispatch(addUser(res.data));
     } catch (err) {
-      if (err.status === 401) {
+      const status = err.response?.status;
+      const message = err.response?.data?.message;
+      console.error("Status:", status);
+      console.error("Message:", message);
+      if (status === 401) {
         navigate("/login");
+        return;
       }
-      console.error(err);
     }
   };
 
   useEffect(() => {
-    if (!userData) {
-      fetchUser();
-    }
+    fetchUser();
   }, []);
 
   return (
     <>
-      <div className="min-h-screen flex flex-col">
+      <div
+        className="min-h-screen flex flex-col bg-cover bg-center bg-fixed"
+        style={{
+          backgroundImage: "url('/background_tinder.png')",
+        }}
+      >
         <Navbar />
 
         <main className="flex-1 pb-4">

@@ -7,6 +7,8 @@ import { BASE_URL } from "../utils/constants";
 import Notification from "./Notification";
 
 const SignUp = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -15,8 +17,6 @@ const SignUp = () => {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
-  const navigate = useNavigate();
 
   const handleOnchange = (e) => {
     const { name, value } = e.target;
@@ -31,11 +31,12 @@ const SignUp = () => {
       const res = await axios.post(BASE_URL + "/signup", formData, {
         withCredentials: true,
       });
+      dispatch(addUser(res.data?.data));
       setSuccess(res.data?.message);
       setTimeout(() => {
         setSuccess("");
       }, 3000);
-      navigate("/login");
+      navigate("/profile");
     } catch (err) {
       setError(err.response?.data?.message);
     }

@@ -7,6 +7,8 @@ import { Provider } from "react-redux";
 import appStore from "./utils/appStore";
 import Feed from "./components/Feed";
 import SignUp from "./components/SignUp";
+import Connections from "./components/Connections";
+import Requests from "./components/Requests";
 function App() {
   const router = createBrowserRouter([
     {
@@ -17,6 +19,8 @@ function App() {
         { path: "/login", Component: Login },
         { path: "/feed", Component: Feed },
         { path: "/profile", Component: Profile },
+        { path: "/connections", Component: Connections },
+        { path: "/requests", Component: Requests },
       ],
     },
   ]);
