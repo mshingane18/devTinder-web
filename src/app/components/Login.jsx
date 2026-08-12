@@ -9,8 +9,8 @@ import Notification from "./Notification";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    emailId: "elon@gmail.com",
-    password: "mShingane@123",
+    emailId: "",
+    password: "",
   });
   const [error, setError] = useState("");
 

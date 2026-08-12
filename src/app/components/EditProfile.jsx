@@ -4,7 +4,7 @@ import { BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import UserCard from "./UserCard";
-import Notification from "./notification";
+import Notification from "./Notification";
 
 const EditProfile = ({ user }) => {
   const { firstName, lastName, age, gender, about, photoUrl, skills } = user;

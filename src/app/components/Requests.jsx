@@ -57,8 +57,8 @@ const Requests = () => {
 
   if (requests.length === 0)
     return (
-      <div className="flex justify-center p-5 bg-base-300 mt-10">
-        <h1>No request found</h1>
+      <div className="flex justify-center mt-20">
+        <h1>No requests found.</h1>
       </div>
     );
   return (
