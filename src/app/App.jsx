@@ -15,6 +15,7 @@ function App() {
       path: "/",
       Component: Body,
       children: [
+        { path: "/", Component: Feed },
         { path: "/login", Component: Login },
         { path: "/feed", Component: Feed },
         { path: "/profile", Component: Profile },
