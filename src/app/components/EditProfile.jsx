@@ -60,12 +60,14 @@ const EditProfile = ({ user }) => {
   return (
     <div className="flex justify-center gap-10">
       <div className="flex justify-center">
-        <div className="card bg-base-300 w-96 shadow-lg mt-5">
+        <div className="card w-96 shadow-lg mt-5 bg-gray-600">
           <div className="card-body">
-            <h2 className="card-title justify-center">Edit Profile</h2>
+            <h2 className="card-title text-white font-bold justify-center">
+              Edit Profile
+            </h2>
             <div>
               <fieldset className="fieldset">
-                <label className="label" htmlFor="firstName">
+                <label className="label text-gray-200" htmlFor="firstName">
                   First Name
                 </label>
                 <input
@@ -77,7 +79,7 @@ const EditProfile = ({ user }) => {
                   placeholder="first name"
                   onChange={handleOnchange}
                 />
-                <label className="label" htmlFor="lastName">
+                <label className="label text-gray-200" htmlFor="lastName">
                   Last Name
                 </label>
                 <input
@@ -89,7 +91,7 @@ const EditProfile = ({ user }) => {
                   placeholder="last name"
                   onChange={handleOnchange}
                 />
-                <label className="label" htmlFor="age">
+                <label className="label text-gray-200" htmlFor="age">
                   Age
                 </label>
                 <input
@@ -101,7 +103,7 @@ const EditProfile = ({ user }) => {
                   placeholder="age"
                   onChange={handleOnchange}
                 />
-                <label className="label" htmlFor="gender">
+                <label className="label text-gray-200" htmlFor="gender">
                   Gender
                 </label>
                 <select
@@ -117,7 +119,7 @@ const EditProfile = ({ user }) => {
                   <option value="female">Female</option>
                   <option value="other">Other</option>
                 </select>
-                <label className="label" htmlFor="password">
+                <label className="label text-gray-200" htmlFor="password">
                   Photo Url
                 </label>
                 <input
@@ -129,18 +131,19 @@ const EditProfile = ({ user }) => {
                   placeholder="photoUrl"
                   onChange={handleOnchange}
                 />
-                <label className="label" htmlFor="password">
+                <label className="label text-gray-200" htmlFor="password">
                   About
                 </label>
                 <textarea
                   id="about"
                   name="about"
                   className="textarea textarea-neutral"
+                  maxLength={150}
                   value={formData.about}
                   placeholder="about"
                   onChange={handleOnchange}
                 ></textarea>
-                <label className="label" htmlFor="password">
+                <label className="label text-gray-200" htmlFor="password">
                   Skills
                 </label>
                 <input
@@ -154,15 +157,18 @@ const EditProfile = ({ user }) => {
                 />
               </fieldset>
             </div>
-            <div className="card-actions justify-center">
-              <button className="btn btn-primary" onClick={handleSaveProfile}>
+            <div className="card-actions justify-center mt-2">
+              <button
+                className="btn btn-dash btn-success"
+                onClick={handleSaveProfile}
+              >
                 Save Profile
               </button>
             </div>
           </div>
         </div>
       </div>
-      <UserCard fromFeed={true} user={formData} />
+      <UserCard formFeed={false} user={formData} />
       {success && <Notification type="success" message={success} />}
 
       {error && <Notification type="error" message={error} />}

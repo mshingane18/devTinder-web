@@ -67,7 +67,7 @@ const Feed = () => {
   return (
     <>
       {success && <Notification type="success" message={success} />}
-      <UserCard fromFeed={false} user={feedData[0]} />;
+      <UserCard formFeed={true} user={feedData[0]} />;
     </>
   );
 };

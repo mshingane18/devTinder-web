@@ -36,12 +36,7 @@ const Body = () => {
 
   return (
     <>
-      <div
-        className="min-h-screen flex flex-col bg-cover bg-center bg-fixed"
-        style={{
-          backgroundImage: "url('/background_tinder.png')",
-        }}
-      >
+      <div className="min-h-screen flex flex-col bg-gray-900 bg-cover bg-center bg-fixed">
         <Navbar />
 
         <main className="flex-1 pb-4">

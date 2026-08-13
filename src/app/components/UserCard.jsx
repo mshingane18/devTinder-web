@@ -3,7 +3,7 @@ import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { removeUserFromFeed } from "../utils/feedSlice";
 
-const UserCard = ({ fromFeed, user }) => {
+const UserCard = ({ formFeed, user }) => {
   const dispatch = useDispatch();
 
   const { _id, firstName, lastName, age, gender, about, photoUrl, skills } =
@@ -31,38 +31,40 @@ const UserCard = ({ fromFeed, user }) => {
 
   return (
     <div className="flex justify-center mt-5">
-      <div className="card bg-base-300 w-96 shadow-lg p-1">
-        <figure className="h-96 overflow-hidden">
+      <div className="card bg-gray-600 w-80 shadow-lg p-1">
+        <figure className="h-96 p-5 overflow-hidden">
           <img
             src={photoUrl}
             alt={firstName}
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full rounded-xl object-cover object-top"
           />
         </figure>
         <div className="card-body">
-          <h2 className="card-title">{firstName + " " + lastName}</h2>
-          <p>
+          <h2 className="card-title text-center text-2xl/9 font-bold tracking-tight text-white">
+            {firstName + " " + lastName}
+          </h2>
+          <p className="text-sm/6 text-gray-200">
             {age && <span>{age}</span>}
             {gender && <span>, {gender}</span>}
           </p>
-          <p>{about}</p>
-          <p>{skills}</p>
-          <div className="card-actions justify-center mt-2">
-            <button
-              disabled={fromFeed}
-              className="btn btn-primary"
-              onClick={() => handleFeed("ignored", _id)}
-            >
-              Ingored
-            </button>
-            <button
-              disabled={fromFeed}
-              className="btn btn-secondary"
-              onClick={() => handleFeed("interested", _id)}
-            >
-              Interested
-            </button>
-          </div>
+          <p className="text-sm/6 text-gray-200">{about}</p>
+          <p className="text-sm/6 text-gray-200">{skills}</p>
+          {formFeed && (
+            <div className="card-actions justify-center mt-2">
+              <button
+                className="btn btn-dash btn-error"
+                onClick={() => handleFeed("ignored", _id)}
+              >
+                Ignored
+              </button>
+              <button
+                className="btn btn-dash btn-success"
+                onClick={() => handleFeed("interested", _id)}
+              >
+                Interested
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
