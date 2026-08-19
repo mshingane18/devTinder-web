@@ -78,141 +78,146 @@ const Login = () => {
 
   return (
     <>
-      <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            alt="Your Company"
-            src="/logo.png"
-            className="mx-auto h-28 w-auto rounded-full object-contain"
-          />
-          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">
-            {isLoginForm ? "Sign in to your account" : "Create a new account"}
-          </h2>
-        </div>
+      <main className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+        <div className="w-full max-w-md rounded-3xl border border-base-content/10 bg-base-100 p-6 shadow-2xl shadow-base-content/10 sm:p-10">
+          <div className="mx-auto w-full">
+            <img
+              alt="DevTinder Logo"
+              src="/logo.png"
+              className="mx-auto h-20 w-auto rounded-full object-contain ring-4 ring-primary/10 sm:h-24"
+            />
+            <p className="mt-6 text-center text-xs font-bold uppercase tracking-[0.2em] text-primary">
+              Developer networking
+            </p>
+            <h2 className="mt-2 text-center text-2xl font-bold tracking-tight text-base-content sm:text-3xl">
+              {isLoginForm ? "Sign in to your account" : "Create a new account"}
+            </h2>
+          </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form
-            onSubmit={isLoginForm ? handleLogin : handleSignUp}
-            className="space-y-6"
-          >
-            {!isLoginForm && (
-              <>
-                <div>
-                  <label
-                    htmlFor="firstName"
-                    className="block text-sm/6 font-medium text-gray-100"
-                  >
-                    First Name
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="firstName"
-                      name="firstName"
-                      type="text"
-                      required
-                      autoComplete="given-name"
-                      className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                      onChange={handleOnchange}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label
-                    htmlFor="lastName"
-                    className="block text-sm/6 font-medium text-gray-100"
-                  >
-                    Last Name
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="lastName"
-                      name="lastName"
-                      type="text"
-                      required
-                      autoComplete="family-name"
-                      className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                      onChange={handleOnchange}
-                    />
-                  </div>
-                </div>
-              </>
-            )}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm/6 font-medium text-gray-100"
-              >
-                Email address
-              </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                  onChange={handleOnchange}
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm/6 font-medium text-gray-100"
-                >
-                  Password
-                </label>
-                {isLoginForm && (
-                  <div className="text-sm">
-                    <a
-                      href="#"
-                      className="font-semibold text-indigo-400 hover:text-indigo-300"
-                    >
-                      Forgot password?
-                    </a>
-                  </div>
-                )}
-              </div>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  autoComplete="current-password"
-                  className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                  onChange={handleOnchange}
-                />
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-              >
-                {isLoginForm ? "Sign in" : "Create account"}
-              </button>
-            </div>
-          </form>
-
-          <p className="mt-10 text-center text-sm/6 text-gray-400">
-            Not a member?{" "}
-            <Link
-              onClick={() => setIsLoginForm(!isLoginForm)}
-              className="font-semibold text-indigo-400 hover:text-indigo-300"
+          <div className="mt-8">
+            <form
+              onSubmit={isLoginForm ? handleLogin : handleSignUp}
+              className="space-y-5"
             >
-              {isLoginForm
-                ? "Create a new account here!"
-                : "Sign in to your existing account"}
-            </Link>
-          </p>
+              {!isLoginForm && (
+                <>
+                  <div>
+                    <label
+                      htmlFor="firstName"
+                      className="block text-sm font-semibold text-base-content"
+                    >
+                      First Name
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="firstName"
+                        name="firstName"
+                        type="text"
+                        required
+                        autoComplete="given-name"
+                        className="input input-bordered h-12 w-full bg-base-200/50 text-base-content transition-colors placeholder:text-base-content/40 focus:border-primary focus:outline-primary"
+                        onChange={handleOnchange}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="lastName"
+                      className="block text-sm font-semibold text-base-content"
+                    >
+                      Last Name
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="lastName"
+                        name="lastName"
+                        type="text"
+                        required
+                        autoComplete="family-name"
+                        className="input input-bordered h-12 w-full bg-base-200/50 text-base-content transition-colors placeholder:text-base-content/40 focus:border-primary focus:outline-primary"
+                        onChange={handleOnchange}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-semibold text-base-content"
+                >
+                  Email address
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    className="input input-bordered h-12 w-full bg-base-200/50 text-base-content transition-colors placeholder:text-base-content/40 focus:border-primary focus:outline-primary"
+                    onChange={handleOnchange}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-semibold text-base-content"
+                  >
+                    Password
+                  </label>
+                  {isLoginForm && (
+                    <div className="text-sm">
+                      <a
+                        href="#"
+                        className="font-semibold text-primary hover:text-primary/80"
+                      >
+                        Forgot password?
+                      </a>
+                    </div>
+                  )}
+                </div>
+                <div className="mt-2">
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    autoComplete="current-password"
+                    className="input input-bordered h-12 w-full bg-base-200/50 text-base-content transition-colors placeholder:text-base-content/40 focus:border-primary focus:outline-primary"
+                    onChange={handleOnchange}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  className="btn btn-primary h-12 w-full rounded-xl text-base font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                >
+                  {isLoginForm ? "Sign in" : "Create account"}
+                </button>
+              </div>
+            </form>
+
+            <p className="mt-8 text-center text-sm leading-6 text-base-content/60">
+              Not a member?{" "}
+              <Link
+                onClick={() => setIsLoginForm(!isLoginForm)}
+                className="font-semibold text-primary underline-offset-4 hover:text-primary/80 hover:underline"
+              >
+                {isLoginForm
+                  ? "Create a new account here!"
+                  : "Sign in to your existing account"}
+              </Link>
+            </p>
+          </div>
+          {error && <Notification message={error} type="error" />}
         </div>
-        {error && <Notification message={error} type="error" />}
-      </div>
+      </main>
     </>
   );
 };

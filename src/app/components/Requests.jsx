@@ -59,59 +59,100 @@ const Requests = () => {
 
   if (requests.length === 0)
     return (
-      <div className="flex justify-center text-sm/6 text-gray-200 mt-20">
-        <h1>No requests found.</h1>
+      <div className="flex min-h-[50vh] items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md rounded-2xl border border-base-content/10 bg-base-100 p-8 text-center shadow-xl shadow-base-content/5">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-secondary/10 text-2xl text-secondary">
+            +
+          </div>
+          <h1 className="text-xl font-bold tracking-tight text-base-content">
+            No pending requests
+          </h1>
+          <p className="mt-2 text-sm leading-6 text-base-content/60">
+            New connection requests will appear here.
+          </p>
+        </div>
       </div>
     );
   return (
-    <div className="mt-5">
-      <ul className="list rounded-box shadow-md w-3xl m-auto">
-        <li className="p-4 pb-2 text-white font-extrabold tracking-wide text-center">
-          Requests
-        </li>
+    <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-10">
+      <div className="mb-6 flex items-end justify-between gap-4 border-b border-base-content/10 pb-5">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-secondary">
+            Incoming invites
+          </p>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-base-content sm:text-3xl">
+            Connection requests
+          </h1>
+        </div>
+        <span className="badge badge-secondary badge-outline px-3 py-3 text-xs font-semibold">
+          {requests.length} {requests.length === 1 ? "request" : "requests"}
+        </span>
+      </div>
+      <ul className="space-y-4">
         {requests.map((req) => {
           const { _id, firstName, lastName, about, photoUrl, skills } =
             req.fromUserId;
           return (
-            <div
-              className="grid grid-cols-12 gap-4 card bg-base-100 shadow-sm w-3xl m-auto mt-5"
+            <li
+              className="group grid overflow-hidden rounded-2xl border border-base-content/10 bg-base-100 shadow-lg shadow-base-content/5 transition-all duration-300 hover:-translate-y-0.5 hover:border-secondary/30 hover:shadow-xl sm:grid-cols-[9rem_1fr_auto]"
               key={_id}
             >
-              <div className="overflow-hidden rounded-l-2xl col-span-3">
+              <div className="relative h-52 overflow-hidden bg-base-300 sm:h-full sm:min-h-44">
                 <img
-                  className="w-full h-full object-cover"
+                  className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                   src={photoUrl}
                   alt={`${firstName} ${lastName}`}
                 />
               </div>
 
-              <div className="p-4 col-span-6">
-                <h2 className="card-title">
-                  {firstName} {lastName}
-                </h2>
-                <h6 className="text-sm text-gray-500">{skills}</h6>
-                <p className="text-gray-500">{about}</p>
+              <div className="flex min-w-0 flex-col justify-center gap-3 p-5 sm:p-6">
+                <div>
+                  <h2 className="text-xl font-bold tracking-tight text-base-content sm:text-2xl">
+                    {firstName} {lastName}
+                  </h2>
+                  <p className="mt-1 line-clamp-3 text-sm leading-6 text-base-content/65">
+                    {about}
+                  </p>
+                </div>
+                {skills && (
+                  <div className="flex flex-wrap gap-2" aria-label="Skills">
+                    {(Array.isArray(skills) ? skills : [skills]).map(
+                      (skill) => (
+                        <span
+                          className="badge badge-outline border-secondary/30 bg-secondary/5 px-3 py-3 text-xs font-semibold text-secondary"
+                          key={`${_id}-${skill}`}
+                        >
+                          {skill}
+                        </span>
+                      ),
+                    )}
+                  </div>
+                )}
               </div>
 
-              <div className="flex items-center justify-end gap-2 p-4 col-span-3">
+              <div className="grid grid-cols-2 gap-3 border-t border-base-content/10 p-4 sm:flex sm:flex-col sm:items-stretch sm:justify-center sm:border-l sm:border-t-0 sm:p-5">
                 <button
-                  className="btn btn-primary"
+                  type="button"
+                  className="btn btn-outline btn-error h-11 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
                   onClick={() => handleRequest("rejected", req._id)}
+                  aria-label={`Reject request from ${firstName} ${lastName}`}
                 >
                   Reject
                 </button>
                 <button
-                  className="btn btn-secondary"
+                  type="button"
+                  className="btn btn-secondary h-11 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
                   onClick={() => handleRequest("accepted", req._id)}
+                  aria-label={`Accept request from ${firstName} ${lastName}`}
                 >
                   Accept
                 </button>
               </div>
-            </div>
+            </li>
           );
         })}
       </ul>
-    </div>
+    </main>
   );
 };
 export default Requests;

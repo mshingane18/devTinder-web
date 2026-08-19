@@ -35,17 +35,19 @@ const Body = () => {
   }, []);
 
   return (
-    <>
-      <div className="min-h-screen flex flex-col bg-gray-900 bg-cover bg-center bg-fixed">
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-base-200 text-base-content">
+      <div className="shrink-0">
         <Navbar />
+      </div>
 
-        <main className="flex-1 pb-4">
-          <Outlet />
-        </main>
+      <main className="flex-1 pb-6">
+        <Outlet />
+      </main>
 
+      <div className="shrink-0">
         <Footer />
       </div>
-    </>
+    </div>
   );
 };
 export default Body;

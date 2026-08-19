@@ -60,15 +60,41 @@ const Feed = () => {
   if (!feedData) return;
   if (feedData.length <= 0)
     return (
-      <div className="flex justify-center p-5 bg-base-300 mt-10">
-        <h1>No more user's found</h1>
-      </div>
+      <main className="flex min-h-[65vh] items-center justify-center px-4 py-12 sm:px-6">
+        <div className="w-full max-w-md rounded-2xl border border-base-content/10 bg-base-100 p-8 text-center shadow-xl shadow-base-content/5">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-2xl text-primary">
+            &lt;/&gt;
+          </div>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+            Discovery complete
+          </p>
+          <h1 className="mt-2 text-2xl font-bold tracking-tight text-base-content">
+            No more developers to show
+          </h1>
+          <p className="mt-3 text-sm leading-6 text-base-content/60">
+            Check back soon for more people to connect with.
+          </p>
+        </div>
+      </main>
     );
   return (
-    <>
-      {success && <Notification type="success" message={success} />}
-      <UserCard formFeed={true} user={feedData[0]} />;
-    </>
+    <main className="mx-auto flex w-full max-w-5xl flex-col items-center px-4 py-6 sm:px-6 sm:py-10">
+      <div className="mb-2 w-full max-w-md text-center">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+          Discover developers
+        </p>
+        <h1 className="mt-1 text-2xl font-bold tracking-tight text-base-content sm:text-3xl">
+          Find your next connection
+        </h1>
+        <p className="mt-2 text-sm leading-6 text-base-content/60">
+          Explore profiles and connect with people who build like you do.
+        </p>
+      </div>
+      <div className="relative w-full max-w-md">
+        {success && <Notification type="success" message={success} />}
+        <UserCard formFeed={true} user={feedData[0]} />
+      </div>
+    </main>
   );
 };
 export default Feed;
