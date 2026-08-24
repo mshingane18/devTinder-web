@@ -1,1 +1,4 @@
-export const BASE_URL = "https://devtinder-78uf.onrender.com";
+export const BASE_URL =
+  location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : "https://devtinder-78uf.onrender.com";
