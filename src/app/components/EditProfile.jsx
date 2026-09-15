@@ -175,9 +175,10 @@ const EditProfile = ({ user }) => {
                 Age
               </label>
               <input
-                type="text"
+                type="number"
                 id="age"
                 name="age"
+                min="18"
                 className="input input-bordered w-full bg-base-200/50 transition-colors focus:border-primary focus:outline-primary"
                 value={formData.age}
                 placeholder="Age"
