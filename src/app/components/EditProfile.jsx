@@ -8,6 +8,16 @@ import Notification from "./Notification";
 
 const EditProfile = ({ user }) => {
   const { firstName, lastName, age, gender, about, photoUrl, skills } = user;
+  const normalizedSkills = Array.isArray(skills)
+    ? skills.flatMap((skill) => {
+        try {
+          const parsedSkill = JSON.parse(skill);
+          return Array.isArray(parsedSkill) ? parsedSkill : [skill];
+        } catch {
+          return [skill];
+        }
+      })
+    : [];
 
   const dispatch = useDispatch();
 
@@ -16,12 +26,25 @@ const EditProfile = ({ user }) => {
     lastName,
     age: age || "",
     gender: gender || "",
-    about,
-    photoUrl,
-    skills: skills.join(", "),
+    about: about || "",
+    photoUrl: photoUrl || "",
+    photo: null,
+    skills: normalizedSkills.join(", "),
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const previewUser = {
+    ...formData,
+    firstName: formData.firstName?.trim(),
+    lastName: formData.lastName?.trim(),
+    age: formData.age?.toString().trim(),
+    gender: formData.gender?.trim(),
+    about: formData.about?.trim(),
+    skills: formData.skills
+      .split(",")
+      .map((skill) => skill.trim())
+      .filter(Boolean),
+  };
 
   const myProfile = useSelector((store) => store.user);
 
@@ -33,25 +56,62 @@ const EditProfile = ({ user }) => {
     }));
   };
 
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image size should be less than 5MB");
+      return;
+    }
+
+    setFormData((prevData) => ({
+      ...prevData,
+      photo: file,
+      photoUrl: URL.createObjectURL(file),
+    }));
+  };
+
   const handleSaveProfile = async () => {
     try {
-      const payload = {
-        ...formData,
-        skills: formData.skills
-          .split(",")
-          .map((skill) => skill.trim())
-          .filter(Boolean),
-      };
-      const res = await axios.patch(BASE_URL + "/profile/edit", formData, {
+      const data = new FormData();
+
+      data.append("firstName", formData.firstName);
+      data.append("lastName", formData.lastName);
+      data.append("age", formData.age);
+      data.append("gender", formData.gender);
+      data.append("about", formData.about);
+
+      data.append(
+        "skills",
+        JSON.stringify(
+          formData.skills
+            .split(",")
+            .map((skill) => skill.trim())
+            .filter(Boolean),
+        ),
+      );
+
+      // Only send photo if user selected a new image
+      if (formData.photo) {
+        data.append("photo", formData.photo);
+      }
+
+      const res = await axios.patch(BASE_URL + "/profile/edit", data, {
         withCredentials: true,
       });
+
       dispatch(addUser(res.data?.data));
+
       setSuccess(res.data?.message);
+
       setTimeout(() => {
         setSuccess("");
       }, 3000);
     } catch (err) {
-      setError(err.response?.data?.message);
+      setError(err.response?.data?.message || "Failed to update profile");
+
       setTimeout(() => {
         setError("");
       }, 3000);
@@ -149,19 +209,23 @@ const EditProfile = ({ user }) => {
             <div className="sm:col-span-2">
               <label
                 className="label text-sm font-semibold text-base-content"
-                htmlFor="photoUrl"
+                htmlFor="photo"
               >
-                Photo URL
+                Profile Photo
               </label>
+
               <input
-                type="text"
-                id="photoUrl"
-                name="photoUrl"
-                className="input input-bordered w-full bg-base-200/50 transition-colors focus:border-primary focus:outline-primary"
-                value={formData.photoUrl}
-                placeholder="https://..."
-                onChange={handleOnchange}
+                type="file"
+                id="photo"
+                name="photo"
+                accept="image/jpeg,image/png,image/webp"
+                className="file-input file-input-bordered w-full bg-base-200/50"
+                onChange={handlePhotoChange}
               />
+
+              <p className="mt-2 text-xs text-base-content/50">
+                JPG, PNG or WebP. Maximum 5MB.
+              </p>
             </div>
             <div className="sm:col-span-2">
               <label
@@ -221,7 +285,7 @@ const EditProfile = ({ user }) => {
             See how your profile appears to others.
           </p>
         </div>
-        <UserCard formFeed={false} user={formData} />
+        <UserCard formFeed={false} user={previewUser} />
       </aside>
       {success && <Notification type="success" message={success} />}
 

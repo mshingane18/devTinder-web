@@ -8,6 +8,19 @@ const UserCard = ({ formFeed, user }) => {
 
   const { _id, firstName, lastName, age, gender, about, photoUrl, skills } =
     user;
+  const displayName = [firstName, lastName]
+    .map((value) => (typeof value === "string" ? value.trim() : value))
+    .filter(Boolean)
+    .join(" ");
+  const profileMeta = [age, gender]
+    .map((value) => (typeof value === "string" ? value.trim() : value))
+    .filter(Boolean)
+    .join(", ");
+  const visibleSkills = Array.isArray(skills)
+    ? skills
+        .filter((skill) => typeof skill === "string" && skill.trim())
+        .map((skill) => skill.trim())
+    : [];
 
   const handleFeed = async (status, userId) => {
     try {
@@ -35,18 +48,19 @@ const UserCard = ({ formFeed, user }) => {
         <figure className="relative aspect-4/5 overflow-hidden bg-base-300">
           <img
             src={photoUrl}
-            alt={`${firstName} ${lastName}`}
+            alt={displayName || "Developer profile"}
             className="h-full w-full object-cover object-top transition-transform duration-700 hover:scale-105"
           />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-linear-to-t from-black/75 to-transparent" />
           <div className="absolute bottom-5 left-5 right-5 text-white">
-            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-              {firstName} {lastName}
-            </h2>
-            {(age || gender) && (
+            {displayName && (
+              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                {displayName}
+              </h2>
+            )}
+            {profileMeta && (
               <p className="mt-1 text-sm font-medium text-white/80">
-                {age && <span>{age}</span>}
-                {gender && <span>{age ? `, ${gender}` : gender}</span>}
+                {profileMeta}
               </p>
             )}
           </div>
@@ -55,9 +69,9 @@ const UserCard = ({ formFeed, user }) => {
           {about && (
             <p className="text-sm leading-6 text-base-content/70">{about}</p>
           )}
-          {skills && (
+          {visibleSkills.length > 0 && (
             <div className="flex flex-wrap gap-2" aria-label="Skills">
-              {(Array.isArray(skills) ? skills : [skills]).map((skill) => (
+              {visibleSkills.map((skill) => (
                 <span
                   className="badge badge-outline border-primary/30 bg-primary/5 px-3 py-3 text-xs font-semibold text-primary"
                   key={skill}

@@ -150,6 +150,15 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li>
+                  <Link
+                    to="/feed"
+                    className="rounded-xl text-base-content transition-colors hover:bg-base-200"
+                    onClick={closeDropdown}
+                  >
+                    Feed
+                  </Link>
+                </li>
+                <li>
                   <a
                     className="rounded-xl text-error transition-colors hover:bg-error/10"
                     onClick={handleLogout}
