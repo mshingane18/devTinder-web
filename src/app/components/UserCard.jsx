@@ -18,8 +18,18 @@ const UserCard = ({ formFeed, user }) => {
     .join(", ");
   const visibleSkills = Array.isArray(skills)
     ? skills
-        .filter((skill) => typeof skill === "string" && skill.trim())
+        .flatMap((skill) => {
+          if (typeof skill !== "string" || !skill.trim()) return [];
+
+          try {
+            const parsedSkill = JSON.parse(skill);
+            return Array.isArray(parsedSkill) ? parsedSkill : [skill];
+          } catch {
+            return skill.split(",");
+          }
+        })
         .map((skill) => skill.trim())
+        .filter(Boolean)
     : [];
 
   const handleFeed = async (status, userId) => {
