@@ -8,6 +8,8 @@ import appStore from "./utils/appStore";
 import Feed from "./components/Feed";
 import Connections from "./components/Connections";
 import Requests from "./components/Requests";
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
 function App() {
   const router = createBrowserRouter([
     {
@@ -16,6 +18,8 @@ function App() {
       children: [
         { path: "/", Component: Feed },
         { path: "/login", Component: Login },
+        { path: "/forgot-password", Component: ForgotPassword },
+        { path: "/reset-password/:token", Component: ResetPassword },
         { path: "/feed", Component: Feed },
         { path: "/profile", Component: Profile },
         { path: "/connections", Component: Connections },

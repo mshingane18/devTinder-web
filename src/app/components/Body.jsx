@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from "react-router";
+import { Outlet, useLocation, useNavigate } from "react-router";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import axios from "axios";
@@ -9,8 +9,13 @@ import { BASE_URL } from "../utils/constants";
 
 const Body = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const navigate = useNavigate();
   const userData = useSelector((store) => store.user);
+  const isPublicRoute =
+    location.pathname === "/login" ||
+    location.pathname === "/forgot-password" ||
+    location.pathname.startsWith("/reset-password/");
 
   const fetchUser = async () => {
     try {
@@ -31,8 +36,11 @@ const Body = () => {
   };
 
   useEffect(() => {
+    if (isPublicRoute) {
+      return;
+    }
     fetchUser();
-  }, []);
+  }, [isPublicRoute, location.pathname]);
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-base-200 text-base-content">

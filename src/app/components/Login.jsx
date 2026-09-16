@@ -171,12 +171,12 @@ const Login = () => {
                   </label>
                   {isLoginForm && (
                     <div className="text-sm">
-                      <a
-                        href="#"
+                      <Link
+                        to="/forgot-password"
                         className="font-semibold text-primary hover:text-primary/80"
                       >
                         Forgot password?
-                      </a>
+                      </Link>
                     </div>
                   )}
                 </div>
