@@ -2,11 +2,13 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import { addConnections } from "../utils/connectionSlice";
 import { removeUser } from "../utils/userSlice";
 
 const Connections = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const connections = useSelector((store) => store.connections);
 
   const fetchConnections = async () => {
@@ -103,6 +105,16 @@ const Connections = () => {
                     )}
                   </div>
                 )}
+                <button
+                  type="button"
+                  className="btn btn-primary mt-1 w-fit gap-2 rounded-xl px-5 text-sm"
+                  onClick={() =>
+                    navigate(`/chat/${_id}`, { state: { connection } })
+                  }
+                >
+                  <span aria-hidden="true">&#128172;</span>
+                  Chat
+                </button>
               </div>
             </li>
           );

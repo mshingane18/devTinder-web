@@ -10,6 +10,7 @@ import Connections from "./components/Connections";
 import Requests from "./components/Requests";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
+import Chat from "./components/Chat";
 function App() {
   const router = createBrowserRouter([
     {
@@ -23,6 +24,7 @@ function App() {
         { path: "/feed", Component: Feed },
         { path: "/profile", Component: Profile },
         { path: "/connections", Component: Connections },
+        { path: "/chat/:connectionId", Component: Chat },
         { path: "/requests", Component: Requests },
       ],
     },
