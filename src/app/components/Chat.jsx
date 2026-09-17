@@ -38,8 +38,6 @@ const Chat = () => {
     if (!trimmedMessage || !socketRef.current) return;
 
     socketRef.current.emit("sendMessage", {
-      firstName: user?.firstName,
-      userId,
       connectionId,
       text: trimmedMessage,
     });
@@ -56,8 +54,6 @@ const Chat = () => {
     const socket = createSocketConnection();
     socketRef.current = socket;
     socket.emit("joinChat", {
-      firstName: user?.firstName,
-      userId,
       connectionId,
     });
 
@@ -104,7 +100,7 @@ const Chat = () => {
       socketRef.current = null;
       socket.disconnect();
     };
-  }, [userId, connectionId, user?.firstName]);
+  }, [userId, connectionId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
