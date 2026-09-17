@@ -82,7 +82,7 @@ const Connections = () => {
                   className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                 />
               </figure>
-              <div className="flex min-w-0 flex-col justify-center gap-3 p-5 sm:p-6">
+              <div className="relative flex min-w-0 flex-col justify-center gap-3 p-5 sm:p-6 sm:pr-36">
                 <div>
                   <h2 className="text-xl font-bold tracking-tight text-base-content sm:text-2xl">
                     {firstName} {lastName}
@@ -107,7 +107,7 @@ const Connections = () => {
                 )}
                 <button
                   type="button"
-                  className="btn btn-primary mt-1 w-fit gap-2 rounded-xl px-5 text-sm"
+                  className="btn btn-primary mt-1 w-fit gap-2 rounded-xl px-5 text-sm sm:absolute sm:right-6 sm:top-1/2 sm:mt-0 sm:-translate-y-1/2"
                   onClick={() =>
                     navigate(`/chat/${_id}`, { state: { connection } })
                   }
