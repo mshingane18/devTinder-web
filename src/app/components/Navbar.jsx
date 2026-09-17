@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
 import { BASE_URL } from "../utils/constants";
 import { removeUser } from "../utils/userSlice";
+import { getProfileCompleteness } from "../utils/profileCompleteness";
 
 const Navbar = () => {
   const user = useSelector((state) => state.user);
@@ -12,6 +13,36 @@ const Navbar = () => {
   const [theme, setTheme] = useState(() =>
     localStorage.getItem("devtinder-theme") === "dark" ? "dark" : "light",
   );
+  const [pendingRequests, setPendingRequests] = useState(0);
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const profile = getProfileCompleteness(user);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchNotificationCounts = async () => {
+      try {
+        const [requestsResponse, unreadResponse] = await Promise.all([
+          axios.get(BASE_URL + "/user/request/received", {
+            withCredentials: true,
+          }),
+          axios.get(BASE_URL + "/chat/unread-count", {
+            withCredentials: true,
+          }),
+        ]);
+        setPendingRequests(requestsResponse.data?.data?.length ?? 0);
+        setUnreadMessages(unreadResponse.data?.unreadCount ?? 0);
+      } catch (error) {
+        if (error.response?.status !== 401) {
+          console.error("Error fetching notification counts:", error);
+        }
+      }
+    };
+
+    fetchNotificationCounts();
+    const interval = setInterval(fetchNotificationCounts, 30000);
+    return () => clearInterval(interval);
+  }, [user]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -122,6 +153,17 @@ const Navbar = () => {
                       </p>
                     </div>
                   </div>
+                  <div className="mt-3">
+                    <div className="mb-1 flex justify-between text-xs text-base-content/60">
+                      <span>Profile completeness</span>
+                      <span>{profile.percentage}%</span>
+                    </div>
+                    <progress
+                      className="progress progress-primary w-full"
+                      value={profile.percentage}
+                      max="100"
+                    />
+                  </div>
                 </li>
                 <li>
                   <Link
@@ -147,7 +189,30 @@ const Navbar = () => {
                     className="rounded-xl text-base-content transition-colors hover:bg-base-200"
                     onClick={closeDropdown}
                   >
-                    Requests
+                    <span className="flex items-center justify-between gap-3">
+                      Requests
+                      {pendingRequests > 0 && (
+                        <span className="badge badge-secondary badge-sm">
+                          {pendingRequests}
+                        </span>
+                      )}
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/connections"
+                    className="rounded-xl text-base-content transition-colors hover:bg-base-200"
+                    onClick={closeDropdown}
+                  >
+                    <span className="flex items-center justify-between gap-3">
+                      Messages
+                      {unreadMessages > 0 && (
+                        <span className="badge badge-primary badge-sm">
+                          {unreadMessages}
+                        </span>
+                      )}
+                    </span>
                   </Link>
                 </li>
                 <li>
