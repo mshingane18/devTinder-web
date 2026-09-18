@@ -1,27 +1,37 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BASE_URL } from "../utils/constants";
 import UserCard from "./UserCard";
 import { useDispatch, useSelector } from "react-redux";
-import { addFeed } from "../utils/feedSlice";
+import { addFeed, appendFeed } from "../utils/feedSlice";
 import { useLocation, useNavigate } from "react-router";
 import Notification from "./Notification";
 
 const Feed = () => {
+  const PAGE_SIZE = 10;
   const dispatch = useDispatch();
   const feedData = useSelector((store) => store.feed);
   const navigate = useNavigate();
   const location = useLocation();
 
   const [success, setSuccess] = useState("");
+  const [hasMore, setHasMore] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const nextPageRef = useRef(1);
 
-  const fetchFeed = async () => {
+  const fetchFeed = async (page = 1, append = false) => {
+    if (isLoading) return;
+    setIsLoading(true);
     try {
       const res = await axios.get(BASE_URL + "/feed", {
+        params: { page, limit: PAGE_SIZE },
         withCredentials: true,
       });
 
-      dispatch(addFeed(res.data?.userFeed));
+      const nextUsers = res.data?.userFeed ?? [];
+      dispatch(append ? appendFeed(nextUsers) : addFeed(nextUsers));
+      setHasMore(nextUsers.length === PAGE_SIZE);
+      nextPageRef.current = page + 1;
     } catch (err) {
       const status = err.response?.status;
       const message = err.response?.data?.message;
@@ -31,11 +41,20 @@ const Feed = () => {
         navigate("/login");
         return;
       }
+    } finally {
+      setIsLoading(false);
     }
   };
+
   useEffect(() => {
-    fetchFeed();
+    fetchFeed(1);
   }, []);
+
+  useEffect(() => {
+    if (feedData?.length === 0 && hasMore && !isLoading) {
+      fetchFeed(nextPageRef.current, true);
+    }
+  }, [feedData, hasMore, isLoading]);
 
   useEffect(() => {
     const message = location.state?.success;
@@ -57,7 +76,7 @@ const Feed = () => {
     }
   }, []);
 
-  if (!feedData) return;
+  if (!feedData || (feedData.length === 0 && isLoading)) return;
   if (feedData.length <= 0)
     return (
       <main className="flex min-h-[65vh] items-center justify-center px-4 py-12 sm:px-6">
