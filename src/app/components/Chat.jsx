@@ -21,6 +21,36 @@ const normalizeMessage = (message) => {
   };
 };
 
+const formatLastSeen = (lastSeenAt) => {
+  const lastSeenDate = new Date(lastSeenAt);
+  if (Number.isNaN(lastSeenDate.getTime())) return "Offline";
+
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const seenDay = new Date(
+    lastSeenDate.getFullYear(),
+    lastSeenDate.getMonth(),
+    lastSeenDate.getDate(),
+  );
+  const daysAgo = Math.round((today - seenDay) / 86400000);
+  const time = lastSeenDate.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  if (daysAgo === 0) return `today at ${time}`;
+  if (daysAgo === 1) return `yesterday at ${time}`;
+  if (daysAgo > 1 && daysAgo < 7) {
+    return `${lastSeenDate.toLocaleDateString([], { weekday: "long" })} at ${time}`;
+  }
+
+  return `${lastSeenDate.toLocaleDateString([], {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  })} at ${time}`;
+};
+
 const Chat = () => {
   const navigate = useNavigate();
   const { connectionId } = useParams();
@@ -306,10 +336,7 @@ const Chat = () => {
                 ? isOnline
                   ? "Online"
                   : lastSeenAt
-                    ? `Last seen ${new Date(lastSeenAt).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}`
+                    ? `Last seen ${formatLastSeen(lastSeenAt)}`
                     : "Offline"
                 : "Reconnecting..."}
             </p>

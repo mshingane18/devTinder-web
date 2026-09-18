@@ -11,14 +11,16 @@ import Requests from "./components/Requests";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import Chat from "./components/Chat";
+import Landing from "./components/Landing";
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
       Component: Body,
       children: [
-        { path: "/", Component: Feed },
+        { path: "/", Component: Landing },
         { path: "/login", Component: Login },
+        { path: "/signup", Component: Login },
         { path: "/forgot-password", Component: ForgotPassword },
         { path: "/reset-password/:token", Component: ResetPassword },
         { path: "/feed", Component: Feed },

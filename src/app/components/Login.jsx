@@ -3,7 +3,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { BASE_URL } from "../utils/constants";
 import Notification from "./Notification";
 
@@ -15,10 +15,12 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = useState("");
-  const [isLoginForm, setIsLoginForm] = useState(true);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isLoginForm, setIsLoginForm] = useState(
+    location.pathname !== "/signup",
+  );
 
   const handleOnchange = (e) => {
     const { name, value } = e.target;

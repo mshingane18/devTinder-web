@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { BASE_URL } from "../utils/constants";
 import { removeUser } from "../utils/userSlice";
 import { getProfileCompleteness } from "../utils/profileCompleteness";
@@ -9,6 +9,7 @@ import { getProfileCompleteness } from "../utils/profileCompleteness";
 const Navbar = () => {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const location = useLocation();
   const navigate = useNavigate();
   const [theme, setTheme] = useState(() =>
     localStorage.getItem("devtinder-theme") === "dark" ? "dark" : "light",
@@ -64,11 +65,24 @@ const Navbar = () => {
     event.currentTarget.blur();
   };
 
+  const handleLandingSection = (event, sectionId) => {
+    event.preventDefault();
+    if (location.pathname === "/") {
+      document.getElementById(sectionId)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      window.history.replaceState(null, "", `/#${sectionId}`);
+      return;
+    }
+    navigate(`/#${sectionId}`);
+  };
+
   return (
     <div className="navbar min-h-16 border-b border-white/10 bg-neutral px-3 text-neutral-content shadow-lg sm:px-6">
       <div className="min-w-0 flex-1">
         <Link
-          to="/feed"
+          to={user ? "/feed" : "/"}
           className="flex w-fit items-center gap-2 text-lg font-bold tracking-tight transition-opacity hover:opacity-80 sm:text-xl"
         >
           <img
@@ -235,6 +249,87 @@ const Navbar = () => {
               </ul>
             </div>
           </div>
+        )}
+        {!user && (
+          <>
+            <nav
+              className="hidden items-center gap-5 text-sm font-semibold md:flex"
+              aria-label="Primary navigation"
+            >
+              <a
+                href="#how-it-works"
+                onClick={(event) => handleLandingSection(event, "how-it-works")}
+                className="transition-colors hover:text-primary"
+              >
+                How it works
+              </a>
+              <a
+                href="#features"
+                onClick={(event) => handleLandingSection(event, "features")}
+                className="transition-colors hover:text-primary"
+              >
+                Features
+              </a>
+              <a
+                href="#about"
+                onClick={(event) => handleLandingSection(event, "about")}
+                className="transition-colors hover:text-primary"
+              >
+                About
+              </a>
+            </nav>
+            <div className="dropdown dropdown-end md:hidden">
+              <div
+                tabIndex={0}
+                role="button"
+                aria-label="Open landing page menu"
+                className="btn btn-ghost btn-circle"
+              >
+                <span className="text-xl" aria-hidden="true">
+                  &#9776;
+                </span>
+              </div>
+              <ul
+                tabIndex={-1}
+                className="menu dropdown-content z-10 mt-3 w-52 rounded-2xl border border-base-content/10 bg-base-100 p-2 text-base-content shadow-2xl"
+              >
+                <li>
+                  <a
+                    href="#how-it-works"
+                    onClick={(event) =>
+                      handleLandingSection(event, "how-it-works")
+                    }
+                  >
+                    How it works
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#features"
+                    onClick={(event) => handleLandingSection(event, "features")}
+                  >
+                    Features
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#about"
+                    onClick={(event) => handleLandingSection(event, "about")}
+                  >
+                    About
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div className="flex items-center gap-1 sm:gap-2">
+              <Link to="/login" className="btn btn-ghost btn-sm rounded-xl">
+                Login
+              </Link>
+              <Link to="/signup" className="btn btn-primary btn-sm rounded-xl">
+                Sign up
+              </Link>
+            </div>
+          </>
         )}
       </div>
     </div>

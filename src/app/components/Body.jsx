@@ -13,7 +13,9 @@ const Body = () => {
   const navigate = useNavigate();
   const userData = useSelector((store) => store.user);
   const isPublicRoute =
+    location.pathname === "/" ||
     location.pathname === "/login" ||
+    location.pathname === "/signup" ||
     location.pathname === "/forgot-password" ||
     location.pathname.startsWith("/reset-password/");
 
