@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router";
 import { BASE_URL } from "../utils/constants";
 import Notification from "./Notification";
+import Loader from "./Loader";
 
 const isStrongPassword = (password) =>
   password.length >= 8 &&
@@ -110,9 +111,14 @@ const ResetPassword = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn btn-primary h-12 w-full rounded-xl text-base font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
+            aria-busy={isSubmitting}
+            className="btn btn-primary h-12 w-full rounded-xl text-base font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {isSubmitting ? "Resetting..." : "Reset password"}
+            {isSubmitting ? (
+              <Loader size="sm" text="Resetting password..." />
+            ) : (
+              "Reset password"
+            )}
           </button>
         </form>
 

@@ -1,17 +1,20 @@
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { addConnections } from "../utils/connectionSlice";
 import { removeUser } from "../utils/userSlice";
+import Loader from "./Loader";
 
 const Connections = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const connections = useSelector((store) => store.connections);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchConnections = async () => {
+    setIsLoading(true);
     try {
       const res = await axios.get(BASE_URL + "/user/connections", {
         withCredentials: true,
@@ -27,12 +30,27 @@ const Connections = () => {
         navigate("/login");
         return;
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchConnections();
   }, []);
+
+  if (isLoading && connections.length === 0) {
+    return (
+      <main className="flex min-h-[60vh] items-center justify-center px-4 py-12 sm:px-6">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <Loader size="lg" ariaLabel="Loading connections" />
+          <p className="text-sm font-medium text-base-content/60">
+            Loading your connections...
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   if (connections.length === 0)
     return (

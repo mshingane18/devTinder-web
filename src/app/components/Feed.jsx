@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addFeed, appendFeed } from "../utils/feedSlice";
 import { useLocation, useNavigate } from "react-router";
 import Notification from "./Notification";
+import Loader from "./Loader";
 
 const Feed = () => {
   const PAGE_SIZE = 10;
@@ -76,7 +77,19 @@ const Feed = () => {
     }
   }, []);
 
-  if (!feedData || (feedData.length === 0 && isLoading)) return;
+  if (!feedData) {
+    return (
+      <main className="flex min-h-[60vh] items-center justify-center px-4 py-12 sm:px-6">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <Loader size="lg" ariaLabel="Loading feed" />
+          <p className="text-sm font-medium text-base-content/60">
+            Loading your feed...
+          </p>
+        </div>
+      </main>
+    );
+  }
+
   if (feedData.length <= 0)
     return (
       <main className="flex min-h-[65vh] items-center justify-center px-4 py-12 sm:px-6">

@@ -5,6 +5,7 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { BASE_URL } from "../utils/constants";
 import { removeUser } from "../utils/userSlice";
 import { getProfileCompleteness } from "../utils/profileCompleteness";
+import Loader from "./Loader";
 
 const Navbar = () => {
   const user = useSelector((state) => state.user);
@@ -16,6 +17,7 @@ const Navbar = () => {
   );
   const [pendingRequests, setPendingRequests] = useState(0);
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const profile = getProfileCompleteness(user);
 
   useEffect(() => {
@@ -51,6 +53,9 @@ const Navbar = () => {
   }, [theme]);
 
   const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+
     dispatch(removeUser());
     navigate("/login");
 
@@ -58,6 +63,8 @@ const Navbar = () => {
       await axios.post(BASE_URL + "/logout", {}, { withCredentials: true });
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -240,10 +247,15 @@ const Navbar = () => {
                 </li>
                 <li>
                   <a
-                    className="rounded-xl text-error transition-colors hover:bg-error/10"
+                    className="rounded-xl text-error transition-colors hover:bg-error/10 disabled:cursor-not-allowed disabled:opacity-70"
                     onClick={handleLogout}
+                    aria-disabled={isLoggingOut}
                   >
-                    Logout
+                    {isLoggingOut ? (
+                      <Loader size="sm" text="Logging out..." />
+                    ) : (
+                      "Logout"
+                    )}
                   </a>
                 </li>
               </ul>

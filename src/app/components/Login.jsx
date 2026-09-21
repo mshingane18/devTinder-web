@@ -6,6 +6,7 @@ import { addUser } from "../utils/userSlice";
 import { Link, useLocation, useNavigate } from "react-router";
 import { BASE_URL } from "../utils/constants";
 import Notification from "./Notification";
+import Loader from "./Loader";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,6 +34,10 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (loading) return;
+    setError("");
+    setLoading(true);
+
     try {
       const res = await axios.post(
         BASE_URL + "/login",
@@ -52,11 +58,17 @@ const Login = () => {
       setTimeout(() => {
         setError("");
       }, 3000);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+    if (loading) return;
+    setError("");
+    setLoading(true);
+
     try {
       const res = await axios.post(
         BASE_URL + "/signup",
@@ -75,6 +87,8 @@ const Login = () => {
       setTimeout(() => {
         setError("");
       }, 3000);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -198,9 +212,22 @@ const Login = () => {
               <div>
                 <button
                   type="submit"
-                  className="btn btn-primary h-12 w-full rounded-xl text-base font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  disabled={loading}
+                  aria-busy={loading}
+                  className="btn btn-primary h-12 w-full rounded-xl text-base font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  {isLoginForm ? "Sign in" : "Create account"}
+                  {loading ? (
+                    <Loader
+                      size="sm"
+                      text={
+                        isLoginForm ? "Signing in..." : "Creating account..."
+                      }
+                    />
+                  ) : isLoginForm ? (
+                    "Sign in"
+                  ) : (
+                    "Create account"
+                  )}
                 </button>
               </div>
             </form>

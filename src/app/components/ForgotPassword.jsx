@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router";
 import { BASE_URL } from "../utils/constants";
 import Notification from "./Notification";
+import Loader from "./Loader";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -71,9 +72,14 @@ const ForgotPassword = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn btn-primary h-12 w-full rounded-xl text-base font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
+            aria-busy={isSubmitting}
+            className="btn btn-primary h-12 w-full rounded-xl text-base font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {isSubmitting ? "Sending..." : "Send reset link"}
+            {isSubmitting ? (
+              <Loader size="sm" text="Sending reset link..." />
+            ) : (
+              "Send reset link"
+            )}
           </button>
         </form>
 

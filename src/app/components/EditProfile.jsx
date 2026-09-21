@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import UserCard from "./UserCard";
 import Notification from "./Notification";
+import Loader from "./Loader";
 
 const EditProfile = ({ user }) => {
   const { firstName, lastName, age, gender, about, photoUrl, skills } = user;
@@ -33,6 +34,7 @@ const EditProfile = ({ user }) => {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
   const previewUser = {
     ...formData,
     firstName: formData.firstName?.trim(),
@@ -74,6 +76,10 @@ const EditProfile = ({ user }) => {
   };
 
   const handleSaveProfile = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
+    setError("");
+
     try {
       const data = new FormData();
 
@@ -93,7 +99,6 @@ const EditProfile = ({ user }) => {
         ),
       );
 
-      // Only send photo if user selected a new image
       if (formData.photo) {
         data.append("photo", formData.photo);
       }
@@ -115,6 +120,8 @@ const EditProfile = ({ user }) => {
       setTimeout(() => {
         setError("");
       }, 3000);
+    } finally {
+      setIsSaving(false);
     }
   };
   return (
@@ -269,10 +276,16 @@ const EditProfile = ({ user }) => {
           <div className="mt-3 border-t border-base-content/10 pt-5">
             <button
               type="button"
-              className="btn btn-primary h-12 w-full rounded-xl text-base transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+              disabled={isSaving}
+              aria-busy={isSaving}
+              className="btn btn-primary h-12 w-full rounded-xl text-base transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70"
               onClick={handleSaveProfile}
             >
-              Save Profile
+              {isSaving ? (
+                <Loader size="sm" text="Saving..." />
+              ) : (
+                "Save Profile"
+              )}
             </button>
           </div>
         </div>

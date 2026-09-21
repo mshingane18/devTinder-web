@@ -2,9 +2,12 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { removeUserFromFeed } from "../utils/feedSlice";
+import { useState } from "react";
+import Loader from "./Loader";
 
 const UserCard = ({ formFeed, user }) => {
   const dispatch = useDispatch();
+  const [actionLoading, setActionLoading] = useState(null);
 
   const { _id, firstName, lastName, age, gender, about, photoUrl, skills } =
     user;
@@ -33,6 +36,8 @@ const UserCard = ({ formFeed, user }) => {
     : [];
 
   const handleFeed = async (status, userId) => {
+    if (actionLoading) return;
+    setActionLoading(status);
     try {
       const res = await axios.post(
         BASE_URL + `/request/send/${status}/${userId}`,
@@ -49,6 +54,8 @@ const UserCard = ({ formFeed, user }) => {
         navigate("/login");
         return;
       }
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -95,19 +102,31 @@ const UserCard = ({ formFeed, user }) => {
             <div className="card-actions mt-1 grid grid-cols-2 gap-3">
               <button
                 type="button"
-                className="btn btn-outline btn-error h-12 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                disabled={actionLoading !== null}
+                aria-busy={actionLoading !== null}
+                className="btn btn-outline btn-error h-12 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70"
                 onClick={() => handleFeed("ignored", _id)}
                 aria-label={`Pass on ${firstName} ${lastName}`}
               >
-                Pass
+                {actionLoading === "ignored" ? (
+                  <Loader size="sm" text="Passing..." />
+                ) : (
+                  "Pass"
+                )}
               </button>
               <button
                 type="button"
-                className="btn btn-primary h-12 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                disabled={actionLoading !== null}
+                aria-busy={actionLoading !== null}
+                className="btn btn-primary h-12 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70"
                 onClick={() => handleFeed("interested", _id)}
                 aria-label={`Show interest in ${firstName} ${lastName}`}
               >
-                Interested
+                {actionLoading === "interested" ? (
+                  <Loader size="sm" text="Sending..." />
+                ) : (
+                  "Interested"
+                )}
               </button>
             </div>
           )}

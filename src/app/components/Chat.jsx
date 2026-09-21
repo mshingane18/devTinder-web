@@ -64,6 +64,7 @@ const Chat = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [hasMoreMessages, setHasMoreMessages] = useState(false);
   const [isLoadingOlder, setIsLoadingOlder] = useState(false);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const user = useSelector((store) => store.user);
   const userId = user?._id;
@@ -251,6 +252,7 @@ const Chat = () => {
     });
 
     const fetchChatHistory = async () => {
+      setIsHistoryLoading(true);
       try {
         const res = await axios.get(BASE_URL + `/chat/${connectionId}`, {
           withCredentials: true,
@@ -270,6 +272,8 @@ const Chat = () => {
         setUnreadCount(res.data?.unreadCount ?? 0);
       } catch (error) {
         if (isActive) console.error("Error fetching chat history:", error);
+      } finally {
+        if (isActive) setIsHistoryLoading(false);
       }
     };
 
@@ -360,7 +364,18 @@ const Chat = () => {
                 Loading older messages...
               </div>
             )}
-            {messages.length === 0 ? (
+            {isHistoryLoading && messages.length === 0 && (
+              <div className="m-auto flex flex-col items-center gap-3 py-10 text-center">
+                <span
+                  className="loading loading-spinner loading-lg text-primary"
+                  aria-hidden="true"
+                />
+                <p className="text-sm font-medium text-base-content/60">
+                  Loading conversation...
+                </p>
+              </div>
+            )}
+            {!isHistoryLoading && messages.length === 0 ? (
               <div className="m-auto max-w-sm text-center">
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-2xl text-primary">
                   &#128172;

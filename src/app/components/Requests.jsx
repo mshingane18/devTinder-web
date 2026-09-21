@@ -1,17 +1,24 @@
 import { useDispatch, useSelector } from "react-redux";
 import { addRequests, removeRequest } from "../utils/requestsSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useNavigate } from "react-router";
 import { removeUser } from "../utils/userSlice";
+import Loader from "./Loader";
 
 const Requests = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const requests = useSelector((store) => store.requests);
+  const [isLoading, setIsLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState({
+    userId: null,
+    action: null,
+  });
 
   const fetchRequests = async () => {
+    setIsLoading(true);
     try {
       const res = await axios.get(BASE_URL + "/user/request/received", {
         withCredentials: true,
@@ -28,10 +35,14 @@ const Requests = () => {
         navigate("/login");
         return;
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleRequest = async (status, userId) => {
+    setActionLoading({ userId, action: status });
+
     try {
       const res = await axios.post(
         BASE_URL + `/request/review/${status}/${userId}`,
@@ -48,6 +59,8 @@ const Requests = () => {
         navigate("/login");
         return;
       }
+    } finally {
+      setActionLoading({ userId: null, action: null });
     }
   };
 
@@ -55,7 +68,20 @@ const Requests = () => {
     fetchRequests();
   }, []);
 
-  if (!requests) return;
+  if (isLoading && !requests) {
+    return (
+      <main className="flex min-h-[60vh] items-center justify-center px-4 py-12 sm:px-6">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <Loader size="lg" ariaLabel="Loading requests" />
+          <p className="text-sm font-medium text-base-content/60">
+            Loading requests...
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  if (!requests) return null;
 
   if (requests.length === 0)
     return (
@@ -133,19 +159,33 @@ const Requests = () => {
               <div className="grid grid-cols-2 gap-3 border-t border-base-content/10 p-4 sm:flex sm:flex-col sm:items-stretch sm:justify-center sm:border-l sm:border-t-0 sm:p-5">
                 <button
                   type="button"
-                  className="btn btn-outline btn-error h-11 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                  disabled={actionLoading.userId === req._id}
+                  aria-busy={actionLoading.userId === req._id}
+                  className="btn btn-outline btn-error h-11 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70"
                   onClick={() => handleRequest("rejected", req._id)}
                   aria-label={`Reject request from ${firstName} ${lastName}`}
                 >
-                  Reject
+                  {actionLoading.userId === req._id &&
+                  actionLoading.action === "rejected" ? (
+                    <Loader size="sm" text="Rejecting..." />
+                  ) : (
+                    "Reject"
+                  )}
                 </button>
                 <button
                   type="button"
-                  className="btn btn-secondary h-11 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                  disabled={actionLoading.userId === req._id}
+                  aria-busy={actionLoading.userId === req._id}
+                  className="btn btn-secondary h-11 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-70"
                   onClick={() => handleRequest("accepted", req._id)}
                   aria-label={`Accept request from ${firstName} ${lastName}`}
                 >
-                  Accept
+                  {actionLoading.userId === req._id &&
+                  actionLoading.action === "accepted" ? (
+                    <Loader size="sm" text="Accepting..." />
+                  ) : (
+                    "Accept"
+                  )}
                 </button>
               </div>
             </li>
