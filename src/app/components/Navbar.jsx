@@ -369,7 +369,10 @@ const Navbar = () => {
                 </ul>
               </div>
               <div className="flex items-center gap-1 sm:gap-2">
-                <Link to="/login" className="btn btn-ghost btn-sm rounded-xl">
+                <Link
+                  to="/login"
+                  className="btn btn-outline rounded-xl border-neutral-content/30 px-6 text-neutral-content hover:border-neutral-content hover:bg-neutral-content hover:text-neutral"
+                >
                   Login
                 </Link>
                 <Link
