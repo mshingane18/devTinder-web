@@ -1,9 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import createSocketConnection from "../utils/socket";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
+import {
+  clearUnreadCount,
+  incrementUnreadCount,
+  setUnreadCount,
+} from "../utils/unreadSlice";
 
 const normalizeMessage = (message) => {
   const sender = message.senderId;
@@ -66,6 +71,7 @@ const Chat = () => {
   const [isLoadingOlder, setIsLoadingOlder] = useState(false);
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
+  const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
   const userId = user?._id;
   const socketRef = useRef(null);
@@ -77,6 +83,17 @@ const Chat = () => {
   const fullName = connection
     ? `${connection.firstName} ${connection.lastName}`
     : "Developer";
+
+  const handleBackToConnections = () => {
+    if (socketRef.current?.connected && connectionId) {
+      socketRef.current.emit("markRead", { connectionId });
+    }
+    if (connectionId) {
+      dispatch(clearUnreadCount(connectionId));
+      setUnreadCount(0);
+    }
+    navigate("/connections");
+  };
 
   const handleMessagesScroll = async (event) => {
     const container = event.currentTarget;
@@ -170,6 +187,8 @@ const Chat = () => {
       socket.emit("joinChat", { connectionId });
       if (!document.hidden) {
         socket.emit("markRead", { connectionId });
+        dispatch(clearUnreadCount(connectionId));
+        setUnreadCount(0);
       }
     };
 
@@ -213,7 +232,10 @@ const Chat = () => {
         if (isNearBottom) shouldScrollRef.current = true;
         if (!isOwnMessage && !document.hidden) {
           socket.emit("markRead", { connectionId });
+          dispatch(clearUnreadCount(connectionId));
+          setUnreadCount(0);
         } else if (!isOwnMessage) {
+          dispatch(incrementUnreadCount(senderId));
           setUnreadCount((count) => count + 1);
         }
 
@@ -268,8 +290,17 @@ const Chat = () => {
           );
           return [...history, ...liveMessages];
         });
+
+        requestAnimationFrame(() => {
+          const container = messagesContainerRef.current;
+          if (container) {
+            container.scrollTop = container.scrollHeight;
+          }
+        });
         setHasMoreMessages(Boolean(res.data?.pagination?.hasMore));
-        setUnreadCount(res.data?.unreadCount ?? 0);
+        const fetchedUnreadCount = Number(res.data?.unreadCount ?? 0);
+        setUnreadCount(fetchedUnreadCount);
+        dispatch(setUnreadCount({ connectionId, count: fetchedUnreadCount }));
       } catch (error) {
         if (isActive) console.error("Error fetching chat history:", error);
       } finally {
@@ -292,6 +323,7 @@ const Chat = () => {
     const handleVisibilityChange = () => {
       if (!document.hidden && socketRef.current?.connected) {
         socketRef.current.emit("markRead", { connectionId });
+        dispatch(clearUnreadCount(connectionId));
         setUnreadCount(0);
       }
     };
@@ -301,20 +333,28 @@ const Chat = () => {
   }, [connectionId]);
 
   useEffect(() => {
-    if (!shouldScrollRef.current && !typingUser) return;
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    shouldScrollRef.current = false;
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    if (shouldScrollRef.current || typingUser) {
+      container.scrollTop = container.scrollHeight;
+      shouldScrollRef.current = false;
+    }
+
+    if (!typingUser) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages, typingUser]);
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-4xl flex-col px-4 py-6 sm:px-6 sm:py-10">
-      <div className="flex h-[calc(100dvh-10rem)] min-h-96 max-h-[70vh] flex-1 flex-col overflow-hidden rounded-2xl border border-base-content/10 bg-base-100 shadow-xl shadow-base-content/5">
+    <main className="mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-5xl flex-col px-4 py-6 sm:px-6 sm:py-8">
+      <div className="flex h-[calc(100dvh-6rem)] min-h-128 max-h-[82vh] flex-1 flex-col overflow-hidden rounded-2xl border border-base-content/10 bg-base-100 shadow-xl shadow-base-content/5 sm:h-[calc(100dvh-7.5rem)]">
         <header className="flex items-center gap-3 border-b border-base-content/10 px-4 py-4 sm:px-6">
           <button
             type="button"
             className="btn btn-ghost btn-sm rounded-lg px-2 text-xl"
             aria-label="Back to connections"
-            onClick={() => navigate("/connections")}
+            onClick={handleBackToConnections}
           >
             &#8592;
           </button>

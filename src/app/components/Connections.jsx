@@ -2,16 +2,28 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { addConnections } from "../utils/connectionSlice";
 import { removeUser } from "../utils/userSlice";
+import { clearUnreadCount, setUnreadCount } from "../utils/unreadSlice";
 import Loader from "./Loader";
 
 const Connections = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const connections = useSelector((store) => store.connections);
+  const unreadCounts = useSelector((store) => store.unreadCounts ?? {});
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedConnectionId, setSelectedConnectionId] = useState(null);
+
+  const handleOpenChat = (connection) => {
+    if (!connection?._id) return;
+    const conversationId = String(connection._id);
+    dispatch(clearUnreadCount(conversationId));
+    setSelectedConnectionId(conversationId);
+    navigate(`/chat/${conversationId}`, { state: { connection } });
+  };
 
   const fetchConnections = async () => {
     setIsLoading(true);
@@ -19,7 +31,15 @@ const Connections = () => {
       const res = await axios.get(BASE_URL + "/user/connections", {
         withCredentials: true,
       });
-      dispatch(addConnections(res.data?.data));
+      const connectionList = res.data?.data ?? [];
+      dispatch(addConnections(connectionList));
+      connectionList.forEach((connection) => {
+        const id = String(connection._id);
+        const count = Number(unreadCounts[id] ?? 0);
+        if (count > 0) {
+          dispatch(setUnreadCount({ connectionId: id, count }));
+        }
+      });
     } catch (err) {
       const status = err.response?.status;
       const message = err.response?.data?.message;
@@ -88,9 +108,17 @@ const Connections = () => {
         {connections.map((connection) => {
           const { _id, firstName, lastName, about, photoUrl, skills } =
             connection;
+          const isSelected = String(selectedConnectionId) === String(_id);
+          const unreadCount = Number(unreadCounts[String(_id)] ?? 0);
+          const previewText = "";
+
           return (
             <li
-              className="group grid gap-0 overflow-hidden rounded-2xl border border-base-content/10 bg-base-100 shadow-lg shadow-base-content/5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-xl sm:grid-cols-[8rem_1fr]"
+              className={`group grid gap-0 overflow-hidden rounded-2xl border bg-base-100 shadow-lg shadow-base-content/5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-xl sm:grid-cols-[8rem_1fr] ${
+                isSelected
+                  ? "border-primary/60 bg-primary/5 ring-1 ring-primary/40"
+                  : "border-base-content/10"
+              }`}
               key={_id}
             >
               <figure className="relative h-52 overflow-hidden bg-base-300 sm:h-full sm:min-h-40">
@@ -101,14 +129,26 @@ const Connections = () => {
                 />
               </figure>
               <div className="relative flex min-w-0 flex-col justify-center gap-3 p-5 sm:p-6 sm:pr-36">
-                <div>
-                  <h2 className="text-xl font-bold tracking-tight text-base-content sm:text-2xl">
-                    {firstName} {lastName}
-                  </h2>
-                  <p className="mt-1 line-clamp-3 text-sm leading-6 text-base-content/65">
-                    {about}
-                  </p>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h2 className="text-xl font-bold tracking-tight text-base-content sm:text-2xl">
+                      {firstName} {lastName}
+                    </h2>
+                    <p className="mt-1 line-clamp-3 text-sm leading-6 text-base-content/65">
+                      {about}
+                    </p>
+                  </div>
+                  {unreadCount > 0 && (
+                    <span className="badge badge-primary badge-sm shrink-0">
+                      {unreadCount}
+                    </span>
+                  )}
                 </div>
+                {unreadCount > 0 && previewText && (
+                  <p className="line-clamp-2 text-sm text-primary/90">
+                    {previewText}
+                  </p>
+                )}
                 {skills && (
                   <div className="flex flex-wrap gap-2" aria-label="Skills">
                     {(Array.isArray(skills) ? skills : [skills]).map(
@@ -126,9 +166,7 @@ const Connections = () => {
                 <button
                   type="button"
                   className="btn btn-primary mt-1 w-fit gap-2 rounded-xl px-5 text-sm sm:absolute sm:right-6 sm:top-1/2 sm:mt-0 sm:-translate-y-1/2"
-                  onClick={() =>
-                    navigate(`/chat/${_id}`, { state: { connection } })
-                  }
+                  onClick={() => handleOpenChat(connection)}
                 >
                   <span aria-hidden="true">&#128172;</span>
                   Chat
