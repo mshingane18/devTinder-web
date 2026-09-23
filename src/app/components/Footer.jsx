@@ -2,7 +2,7 @@ import { Link } from "react-router";
 
 const Footer = () => {
   return (
-    <footer className="mt-auto border-t border-white/10 bg-neutral px-5 py-8 text-neutral-content sm:px-8">
+    <footer className="mt-auto border-t border-white/10 bg-neutral px-2 py-4 text-neutral-content sm:px-4">
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-6 sm:flex-row">
         <aside className="flex items-center gap-3 text-center sm:text-left">
           <img

@@ -19,6 +19,7 @@ import {
   FiUsers,
   FiLogOut,
   FiUser,
+  FiMenu,
 } from "react-icons/fi";
 
 const Navbar = () => {
@@ -149,67 +150,161 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-1 sm:gap-3">
+          {/* Logged-in navigation */}
           {user && (
-            <div className="hidden items-center gap-1 sm:flex">
-              {/* Feed */}
-              <Link
-                to="/feed"
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                  location.pathname === "/feed"
-                    ? "bg-primary text-primary-content"
-                    : "text-neutral-content hover:bg-white/10"
-                }`}
+            <>
+              {/* Desktop Navigation */}
+              <nav
+                className="hidden items-center gap-1 md:flex"
+                aria-label="Primary navigation"
               >
-                <FiCompass className="h-4 w-4" aria-hidden="true" />
-                <span>Feed</span>
-              </Link>
+                {/* Feed */}
+                <Link
+                  to="/feed"
+                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                    location.pathname === "/feed"
+                      ? "bg-primary text-primary-content"
+                      : "text-neutral-content hover:bg-white/10"
+                  }`}
+                >
+                  <FiCompass className="h-4 w-4" aria-hidden="true" />
+                  <span>Feed</span>
+                </Link>
 
-              {/* Requests */}
-              <Link
-                to="/requests"
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                  location.pathname === "/requests"
-                    ? "bg-primary text-primary-content"
-                    : "text-neutral-content hover:bg-white/10"
-                }`}
-              >
-                <FiUserPlus className="h-4 w-4" aria-hidden="true" />
+                {/* Requests */}
+                <Link
+                  to="/requests"
+                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                    location.pathname === "/requests"
+                      ? "bg-primary text-primary-content"
+                      : "text-neutral-content hover:bg-white/10"
+                  }`}
+                >
+                  <FiUserPlus className="h-4 w-4" aria-hidden="true" />
 
-                <span>Requests</span>
+                  <span>Requests</span>
 
-                {pendingRequests > 0 && (
-                  <span
-                    className="badge badge-error badge-sm text-white"
-                    aria-label={`${pendingRequests} pending connection requests`}
-                  >
-                    {pendingRequests > 99 ? "99+" : pendingRequests}
-                  </span>
-                )}
-              </Link>
+                  {pendingRequests > 0 && (
+                    <span
+                      className="badge badge-error badge-sm text-white"
+                      aria-label={`${pendingRequests} pending connection requests`}
+                    >
+                      {pendingRequests > 99 ? "99+" : pendingRequests}
+                    </span>
+                  )}
+                </Link>
 
-              {/* Connections */}
-              <Link
-                to="/connections"
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                  location.pathname === "/connections"
-                    ? "bg-primary text-primary-content"
-                    : "text-neutral-content hover:bg-white/10"
-                }`}
-              >
-                <FiUsers className="h-4 w-4" aria-hidden="true" />
+                {/* Connections */}
+                <Link
+                  to="/connections"
+                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                    location.pathname === "/connections"
+                      ? "bg-primary text-primary-content"
+                      : "text-neutral-content hover:bg-white/10"
+                  }`}
+                >
+                  <FiUsers className="h-4 w-4" aria-hidden="true" />
 
-                <span>Connections</span>
+                  <span>Connections</span>
 
-                {totalUnreadCount > 0 && (
-                  <span
-                    className="badge badge-error badge-sm text-white"
-                    aria-label={`${totalUnreadCount} unread messages`}
-                  >
-                    {totalUnreadCount > 99 ? "99+" : totalUnreadCount}
-                  </span>
-                )}
-              </Link>
-            </div>
+                  {totalUnreadCount > 0 && (
+                    <span
+                      className="badge badge-error badge-sm text-white"
+                      aria-label={`${totalUnreadCount} unread messages`}
+                    >
+                      {totalUnreadCount > 99 ? "99+" : totalUnreadCount}
+                    </span>
+                  )}
+                </Link>
+              </nav>
+
+              {/* Mobile Navigation */}
+              <div className="dropdown dropdown-end md:hidden">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  aria-label="Open navigation menu"
+                  className="btn btn-ghost btn-circle text-neutral-content hover:bg-white/10"
+                >
+                  <FiMenu className="h-5 w-5" aria-hidden="true" />
+                </div>
+
+                <ul
+                  tabIndex={-1}
+                  className="menu menu-sm dropdown-content z-[100] mt-3 w-64 rounded-2xl border border-base-content/10 bg-base-100 p-2 text-base-content shadow-2xl"
+                >
+                  {/* Feed */}
+                  <li>
+                    <Link
+                      to="/feed"
+                      onClick={closeDropdown}
+                      className={`rounded-xl ${
+                        location.pathname === "/feed"
+                          ? "bg-primary text-primary-content"
+                          : ""
+                      }`}
+                    >
+                      <span className="flex items-center gap-3">
+                        <FiCompass className="h-4 w-4" aria-hidden="true" />
+                        <span>Feed</span>
+                      </span>
+                    </Link>
+                  </li>
+
+                  {/* Requests */}
+                  <li>
+                    <Link
+                      to="/requests"
+                      onClick={closeDropdown}
+                      className={`rounded-xl ${
+                        location.pathname === "/requests"
+                          ? "bg-primary text-primary-content"
+                          : ""
+                      }`}
+                    >
+                      <span className="flex w-full items-center justify-between gap-3">
+                        <span className="flex items-center gap-3">
+                          <FiUserPlus className="h-4 w-4" aria-hidden="true" />
+                          <span>Requests</span>
+                        </span>
+
+                        {pendingRequests > 0 && (
+                          <span className="badge badge-error badge-sm text-white">
+                            {pendingRequests > 99 ? "99+" : pendingRequests}
+                          </span>
+                        )}
+                      </span>
+                    </Link>
+                  </li>
+
+                  {/* Connections */}
+                  <li>
+                    <Link
+                      to="/connections"
+                      onClick={closeDropdown}
+                      className={`rounded-xl ${
+                        location.pathname === "/connections"
+                          ? "bg-primary text-primary-content"
+                          : ""
+                      }`}
+                    >
+                      <span className="flex w-full items-center justify-between gap-3">
+                        <span className="flex items-center gap-3">
+                          <FiUsers className="h-4 w-4" aria-hidden="true" />
+                          <span>Connections</span>
+                        </span>
+
+                        {totalUnreadCount > 0 && (
+                          <span className="badge badge-error badge-sm text-white">
+                            {totalUnreadCount > 99 ? "99+" : totalUnreadCount}
+                          </span>
+                        )}
+                      </span>
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </>
           )}
           <label className="swap swap-rotate rounded-full p-2 text-neutral-content transition-colors hover:bg-white/10">
             <input
