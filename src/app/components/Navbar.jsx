@@ -13,6 +13,13 @@ import {
 } from "../utils/unreadSlice";
 import Loader from "./Loader";
 import Notification from "./Notification";
+import {
+  FiCompass,
+  FiUserPlus,
+  FiUsers,
+  FiLogOut,
+  FiUser,
+} from "react-icons/fi";
 
 const Navbar = () => {
   const user = useSelector((state) => state.user);
@@ -142,6 +149,68 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-1 sm:gap-3">
+          {user && (
+            <div className="hidden items-center gap-1 sm:flex">
+              {/* Feed */}
+              <Link
+                to="/feed"
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                  location.pathname === "/feed"
+                    ? "bg-primary text-primary-content"
+                    : "text-neutral-content hover:bg-white/10"
+                }`}
+              >
+                <FiCompass className="h-4 w-4" aria-hidden="true" />
+                <span>Feed</span>
+              </Link>
+
+              {/* Requests */}
+              <Link
+                to="/requests"
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                  location.pathname === "/requests"
+                    ? "bg-primary text-primary-content"
+                    : "text-neutral-content hover:bg-white/10"
+                }`}
+              >
+                <FiUserPlus className="h-4 w-4" aria-hidden="true" />
+
+                <span>Requests</span>
+
+                {pendingRequests > 0 && (
+                  <span
+                    className="badge badge-error badge-sm text-white"
+                    aria-label={`${pendingRequests} pending connection requests`}
+                  >
+                    {pendingRequests > 99 ? "99+" : pendingRequests}
+                  </span>
+                )}
+              </Link>
+
+              {/* Connections */}
+              <Link
+                to="/connections"
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                  location.pathname === "/connections"
+                    ? "bg-primary text-primary-content"
+                    : "text-neutral-content hover:bg-white/10"
+                }`}
+              >
+                <FiUsers className="h-4 w-4" aria-hidden="true" />
+
+                <span>Connections</span>
+
+                {totalUnreadCount > 0 && (
+                  <span
+                    className="badge badge-error badge-sm text-white"
+                    aria-label={`${totalUnreadCount} unread messages`}
+                  >
+                    {totalUnreadCount > 99 ? "99+" : totalUnreadCount}
+                  </span>
+                )}
+              </Link>
+            </div>
+          )}
           <label className="swap swap-rotate rounded-full p-2 text-neutral-content transition-colors hover:bg-white/10">
             <input
               type="checkbox"
@@ -232,62 +301,31 @@ const Navbar = () => {
                       className="rounded-xl text-base-content transition-colors hover:bg-base-200"
                       onClick={closeDropdown}
                     >
-                      Profile
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/connections"
-                      className="rounded-xl text-base-content transition-colors hover:bg-base-200"
-                      onClick={closeDropdown}
-                    >
-                      <span className="flex items-center justify-between gap-3">
-                        Connections
-                        {totalUnreadCount > 0 && (
-                          <span className="badge badge-primary badge-sm">
-                            {totalUnreadCount}
-                          </span>
-                        )}
+                      <span className="flex items-center gap-3">
+                        <FiUser className="h-4 w-4" aria-hidden="true" />
+                        <span>View / Edit Profile</span>
                       </span>
                     </Link>
                   </li>
-                  <li>
-                    <Link
-                      to="/requests"
-                      className="rounded-xl text-base-content transition-colors hover:bg-base-200"
-                      onClick={closeDropdown}
-                    >
-                      <span className="flex items-center justify-between gap-3">
-                        Requests
-                        {pendingRequests > 0 && (
-                          <span className="badge badge-secondary badge-sm">
-                            {pendingRequests}
-                          </span>
-                        )}
-                      </span>
-                    </Link>
+                  <li className="my-1">
+                    <div className="h-px bg-base-content/10 p-0"></div>
                   </li>
                   <li>
-                    <Link
-                      to="/feed"
-                      className="rounded-xl text-base-content transition-colors hover:bg-base-200"
-                      onClick={closeDropdown}
-                    >
-                      Feed
-                    </Link>
-                  </li>
-                  <li>
-                    <a
-                      className="rounded-xl text-error transition-colors hover:bg-error/10 disabled:cursor-not-allowed disabled:opacity-70"
+                    <button
+                      type="button"
+                      className="w-full rounded-xl text-error transition-colors hover:bg-error/10 disabled:cursor-not-allowed disabled:opacity-70"
                       onClick={handleLogout}
-                      aria-disabled={isLoggingOut}
+                      disabled={isLoggingOut}
                     >
                       {isLoggingOut ? (
                         <Loader size="sm" text="Logging out..." />
                       ) : (
-                        "Logout"
+                        <span className="flex items-center gap-3">
+                          <FiLogOut className="h-4 w-4" aria-hidden="true" />
+                          <span>Logout</span>
+                        </span>
                       )}
-                    </a>
+                    </button>
                   </li>
                 </ul>
               </div>
